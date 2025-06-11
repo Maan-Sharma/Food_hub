@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Food_hub" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="postSplashScreenTheme">@style/Theme.Food_hub</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/animetedlogo</item>
+    </style>
+</resources>
