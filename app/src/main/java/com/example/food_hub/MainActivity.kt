@@ -12,52 +12,54 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.food_hub.ui.theme.FoodhubTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    var showSplashScreen = true
+
+     var showSplashScreen=true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
-            setKeepOnScreenCondition{
-                true
+            setKeepOnScreenCondition {
+                showSplashScreen
             }
-            setOnExitAnimationListener{ screen ->
-               val zoomX = ObjectAnimator.ofFloat(
-                   screen.iconView,
-                   View.SCALE_X,
-                   0.5f,
-                   0f
-               )
-                val zoomy = ObjectAnimator.ofFloat(
-                    screen.iconView,
-                    View.SCALE_X,
-                    0.5f,
-                    0f
-                )
-                zoomX.duration=500
-                zoomy.duration=500
-                zoomX.interpolator=OvershootInterpolator()
-                zoomy.interpolator=OvershootInterpolator()
-                zoomX.doOnEnd {
+            setOnExitAnimationListener { screen ->
+                val zoomX = ObjectAnimator.ofFloat(screen.iconView, View.SCALE_X, 0.5f, 0f)
+                val zoomY = ObjectAnimator.ofFloat(screen.iconView, View.SCALE_Y, 0.5f, 0f)
+
+                zoomX.duration = 500
+                zoomY.duration = 500
+                zoomX.interpolator = OvershootInterpolator()
+                zoomY.interpolator = OvershootInterpolator()
+
+                zoomY.doOnEnd {
                     screen.remove()
                 }
-                zoomy.doOnEnd {
-                    screen.remove()
-                }
-                zoomy.start()
+
                 zoomX.start()
+                zoomY.start()
             }
         }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(3000)
+            showSplashScreen = false
+        }
+
         setContent {
             FoodhubTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -67,10 +69,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(3000)
-            showSplashScreen=false
         }
     }
 }
